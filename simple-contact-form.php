@@ -1,12 +1,7 @@
-
 <?php
 $showform = true;
 $errors = '';
 $myemail = 'youremail@gmail.com';
-
-
-
-
 
 if (isset($_POST))
 {
@@ -15,10 +10,6 @@ if (isset($_POST))
 	$email = $_POST['email2'];
 	$message = $_POST['message2'];
 	$security = $_POST['security2'];
-	
-	
-
-
 
 		// CHECKS SECURITY QUESTION	
 		if ($security != '54032')
@@ -45,15 +36,10 @@ if (isset($_POST))
 			
 			unset($_POST);
 			echo '<meta http-equiv="refresh" content="5;url=contact.php" />';
-			
 			//redirect to the 'thank you' page
 			//header('Location: contact_success.html');
 		}
 	}
-
-
-
-
 
 ?>
 
