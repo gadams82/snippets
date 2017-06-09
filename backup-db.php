@@ -15,8 +15,8 @@
 	$GLOBALS['errors'] = array();
 
 	//place to save
-	$save_dir			= '../../www-backup/db/';
-	$monthly_dir		= '../../www-backup/db/monthly/';
+	$save_dir			= '../../backups/db/';
+	$monthly_dir		= '../../backups/db/monthly/';
 	
 	backupDatabase($GLOBALS['db-creds'], $tables=false, $backup_name=false, $save_dir,$monthly_dir );
 	importDB($GLOBALS['db-creds'],$GLOBALS['db-backup']['backupDB'],$GLOBALS['db-backup']['backupfile']);
