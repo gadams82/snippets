@@ -9,6 +9,7 @@
  /_ _||  || || ||   || || || ||  ||    ~ ||        /_ _||  || | | (( ||  ||/    ~ ||    
 (  - \\, \\ \\ \\,/ \\ |/ \\,/   \\,  ,-_-        (  - \\, \\/\\/  \/\\  |/    ,-_-  <> 
                       _/                                                (               
+version 1.0
 									  P___----....
 									! __
 						  ' ~~ ---.#..__ `  ~  ~    -  -  .   .:
@@ -34,7 +35,17 @@
 			   /' .       ' -^^^...--- ``(/'    _  '   '' `,;
 	##,. .#...(       '   .c  c .c  c  c.    '..      ;; ../ 
 	%%#%;,..##.\_                           ,;###;,. ;;.:##;,.    
-	%%%%########%%%%;,.....,;%%%%%%;,.....,;%%%%%%%%%%%%%%%%%%%%............              
+	%%%%########%%%%;,.....,;%%%%%%;,.....,;%%%%%%%%%%%%%%%%%%%%............      
+	
+Anchors away is a simple crawler & scraper script written by Gary Adams of Wormhole Web Works. With it you can
+crawl recursively while striping, anchor tags, imgs urls, text content, html blocks, page titles & metas tags from any site.
+It's just been born so there is no error handling yet. 
+
+If you find it usefull maybe toss some work our way at http://www.wormholewebworks.com
+or like us on facebook @ https://www.facebook.com/wormholewebworks/.
+Have fun swashbuckling 
+
+
 */
 
 
@@ -67,29 +78,29 @@ function anchorsAway($url, $plunder, $depth = 5)
         $href = $element->getAttribute('href');
 		//if the url doesnt start with http, relative url detection and global url reconstruction
         if (0 !== strpos($href, 'http')) {
-			//add a slash,but remove slashes if they are present. "/something" or "something" both return "/somthing"
+		//add a slash, but remove slashes if they are present. "/something" or "something" both return "/somthing"
             $path = '/' . ltrim($href, '/');
 			
-			//if we still have http somewhere, go ahead and build url
+		//if we still have http, go ahead and build url
             if (extension_loaded('http')) {
                 $href = http_build_url($url, array('path' => $path));
             } else {
-				//parse the url in parts 'scheme' == http || https and 'host' = domain
+		//parse the url in parts 'scheme' == http || https and 'host' = domain
                 $parts = parse_url($url);
-				//add domain and ://
+		//add domain and ://
                 $href = $parts['scheme'] . '://';
-				//if parts 'user' and 'pass' exist
+		//if parts 'user' and 'pass' exist
                 if (isset($parts['user']) && isset($parts['pass'])) {
-					//add them back at the begining
+		//add them back at the begining
                     $href .= $parts['user'] . ':' . $parts['pass'] . '@';
                 }
-				//add host "domain"
+		//add host "domain"
                 $href .= $parts['host'];
-				//add port if set
+		//add port if set
                 if (isset($parts['port'])) {
                     $href .= ':' . $parts['port'];
                 }
-				//finally add the path back in, we now now have constructed our full global url from a relative one
+		//finally add the path back in, we now now have constructed our full global url from a relative one
                 $href .= $path;
             }
         }
@@ -102,10 +113,12 @@ function anchorsAway($url, $plunder, $depth = 5)
 
 
 function plunder($plunder, $resources){
-
+	//get our dom object and url
 	$dom = $resources['dom'];
 	$url = $resources['url'];
+	//setup or xpath query object 
 	$finder = new DomXPath($dom);
+	//set or booty
 	$booty = array();
 	//get title tags
 	if(isset($plunder['titles'])){
@@ -123,6 +136,7 @@ function plunder($plunder, $resources){
 		$url_key = str_replace('-'," ",basename($url));
 	}
 	else{
+		//reduce url to basename
 		$url_key = basename($url);
 	}
 	$booty[$url_key] = array();
@@ -202,11 +216,12 @@ function plunder($plunder, $resources){
 				$booty[$url_key]['xpath html'][] = $desc;
 			}
 		}
-		
+		//print it out
 		echo '<pre>';
 		var_dump($booty); 
 		echo '</pre>';
-
+		//or return it.
+		return $booty;
 }
 
 function DOMinnerHTML(DOMNode $element) 
@@ -223,20 +238,28 @@ function DOMinnerHTML(DOMNode $element)
 } 
 
 
-$myPlunder = array(
-	'img' => 1,
-	//'elements by id' => 'partLongDescription',
-	//'img xpath' => "//div[@id='ie8Image']/img",
-	//'description xpath' => "//div[@class='wpb_wrapper']",
-	//'children xpath' => "//div[@class='wpb_wrapper']",
-	//'metas' => true,
-	//'titles' => true,
-	//'drop dashes' => true,
+$my_plunder_args = array(
+	//rip all images from page.
+	'img' => true, 
+	//rip text content from any given ID
+	'elements by id' => 'some Id',
+	//rip images from inside any xpath
+	'img xpath' => "xpath to element",
+	//rip text content from any xpath
+	'description xpath' => "xpath to element",
+	//rip text inner html from any xpath
+	'children xpath' => "xpath to element",
+	//rip metas from any url
+	'metas' => true,
+	//rip titles form url 
+	'titles' => true,
+	//drop dashes from ulr keys
+	'drop dashes' => true,
 	
 );
 
 
-anchorsAway('http://tappinroots.com/products/all-stages/', $myPlunder, 2);
+anchorsAway('http://yourwebsite.com/', $my_plunder_args, 2);
 
 
 ?>
